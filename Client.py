@@ -6,6 +6,7 @@ class Client:
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	def __init__(self, address):
 		self.sock.connect((address,10000))
+		self.run()
 	def run(self):	
 		while True:
 			self.sendMsg()
