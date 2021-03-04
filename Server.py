@@ -22,8 +22,17 @@ class Server:
 				cThread = threading.Thread(target = self.handler, args = (c,a))
 				cThread.daemon = True
 				cThread.start()
+				aThread = threading.Thread(target = self.broadcast)
+				aThread.daemon = True
+				aThread.start()
 				self.connections.append(c)
 				print(str([a[0]]) + ":" + str(a[1]), "connected" )
+	def broadcast(self):
+		while True:
+			data = input("")
+			for connection in self.connections:
+				connection.send(bytes(data, 'utf-8'))
+				#print("Sending")
 
 server_inst = Server()
 server_inst.run()
