@@ -10,4 +10,4 @@ class Client:
 	def sendMsg(self):
 		self.sock.send(bytes(input(""), 'utf-8'))
 
-client_inst = Client('127.0.0.1')
+client_inst = Client('104.45.152.207')
