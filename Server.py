@@ -38,7 +38,7 @@ class Server:
 				for connection in self.connections:
 					connection.send(bytes(data, 'utf-8'))
 			if data == "Close": 
-				self.sock.shutdown()
+				self.sock.shutdown(socket.SHUT_RDWR)
 				exit()
 
 server_inst = Server()
