@@ -16,7 +16,7 @@ class Server:
 				c.close()
 				break;
 			print(alias + ' says: ' + str(data,'utf-8'))
-			#self.broadcast_single(data);
+			self.broadcast_single(data);
 	def run(self):
 		while True:
 				c, a = self.sock.accept()
@@ -30,7 +30,7 @@ class Server:
 				print(str([a[0]]) + ":" + str(a[1]), "connected" )
 	def broadcast_single(self,data):
 		for connection in self.connections:
-				connection.send(bytes(data, 'utf-8'))
+				connection.send(data)
 	def broadcast(self):
 		while True:
 			data = input("")
