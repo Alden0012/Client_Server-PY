@@ -1,5 +1,6 @@
 import socket
 import threading
+self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 class Server:
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	connections = []
