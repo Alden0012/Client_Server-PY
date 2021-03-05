@@ -16,7 +16,7 @@ class Server:
 				c.close()
 				break;
 			print(alias + ' says: ' + str(data,'utf-8'))
-			self.broadcast_single(data);
+			#self.broadcast_single(data);
 	def run(self):
 		while True:
 				c, a = self.sock.accept()
