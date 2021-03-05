@@ -37,9 +37,9 @@ class Server:
 			if data != "Close":
 				for connection in self.connections:
 					connection.send(bytes(data, 'utf-8'))
-					#print("Sending")
-			else: 
-				self.sock.close()
+			if data == "Close": 
+				self.sock.shutdown()
+				exit()
 
 server_inst = Server()
 server_inst.run()
