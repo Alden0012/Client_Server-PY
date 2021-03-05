@@ -16,7 +16,7 @@ class Server:
 				c.close()
 				break;
 			print(alias + ' says: ' + str(data,'utf-8'))
-			broadcast_single(data);
+			self.broadcast_single(data);
 	def run(self):
 		while True:
 				c, a = self.sock.accept()
@@ -34,9 +34,12 @@ class Server:
 	def broadcast(self):
 		while True:
 			data = input("")
-			for connection in self.connections:
-				connection.send(bytes(data, 'utf-8'))
-				#print("Sending")
+			if data != "Close":
+				for connection in self.connections:
+					connection.send(bytes(data, 'utf-8'))
+					#print("Sending")
+			else: 
+				self.sock.close()
 
 server_inst = Server()
 server_inst.run()
