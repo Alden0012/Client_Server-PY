@@ -49,7 +49,8 @@ class Client:
 			self.runS2()				
 			
 	def sendMsg(self):
-		self.sock.send(bytes("A", 'utf-8'))
+		data = input("Answer: ")
+		self.sock.send(bytes(data, 'utf-8'))
 
 	def ping_jtag(self):
 		#pings the jtag with the letter t, when the fgpa recieves this through the jtag
@@ -57,7 +58,9 @@ class Client:
 		inputCmd = "nios2-terminal <<< t"
 		output = subprocess.run(inputCmd, shell=True, executable='/bin/bash', stdout=subprocess.PIPE)
 		vals = output.stdout
-		return vals
+		vals = vals.decode(encoding ='UTF-8',errors='ignore')
+    	vals = vals.split('<-->')
+		return vals[2]
     	
 
 client_inst = Client('127.0.0.1')
