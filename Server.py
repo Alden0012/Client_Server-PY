@@ -9,7 +9,7 @@ class Server:
 	Players = {}
 	Recieved = {}
 	AliasToC = {}
-	maxPlayers = 2
+	maxPlayers = 4
 	def __init__(self):
 		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.sock.bind(('0.0.0.0', 10000))
@@ -38,11 +38,11 @@ class Server:
 				#aThread.daemon = True
 				#aThread.start()
 				self.connections.append(c)
-				alias = str([a[0]]) + ":" + str(a[1])
+				alias =  str(a[1])
 				self.Players[alias] = 0
 				self.Recieved[alias] = 0
 				self.AliasToC[alias] = c
-				print(str([a[0]]) + ":" + str(a[1]), "connected" )
+				print(str(a[1]), "connected" )
 				
 				if len(self.connections) > self.maxPlayers-1:
 					break
@@ -52,10 +52,10 @@ class Server:
 					connection.send(bytes('c', 'utf-8'))
 		self.runS2();				
 	def runS2(self):
-		for connection in self.connections:
-			connection.send(bytes("Get Ready!" + "\n", 'utf-8'))
+		for key in self.AliasToC.keys():
+			self.AliasToC[key].send(bytes("Get Ready! Player: " + str(key) + "\n", 'utf-8'))
 		i = 1
-		while i < 3: 
+		while i < 11: 
 			#for connection in self.connections:
 			#	connection.send(bytes("Round " + str(i), 'utf-8'))
 			Question, answer = random.choice(list(self.QuestionBank.items())) 
@@ -76,7 +76,7 @@ class Server:
 					self.AliasToC[key].send(bytes("Correct!\n" + "\n", 'utf-8'))
 					self.AliasToC[key].send(bytes("Points: " + str(self.Players[key]) + "\n", 'utf-8'))
 				else:
-					self.AliasToC[key].send(bytes("Incorrect!\n", 'utf-8'))
+					self.AliasToC[key].send(bytes("Incorrect!\n\n", 'utf-8'))
 					self.AliasToC[key].send(bytes("Points: " + str(self.Players[key]) + "\n", 'utf-8'))
 			print(self.Players)
 			i = i + 1
