@@ -28,6 +28,7 @@ class Client:
 		aThread.start()
 		while started:
 			#time.sleep(0.1)
+
 			self.sendMsg()
 		aThread.stop()
 		print("Thanks for playing!")
@@ -48,7 +49,7 @@ class Client:
 
 			elif(str(data,'utf-8')[0:6] == "Points"):
 				self.ToSend = int(str(data,'utf-8')[8])
-	
+
 			if(str(data,'utf-8') == "e" or str(data,'utf-8') == ""):
 				started = False
 				break
@@ -61,7 +62,9 @@ class Client:
 			self.runS2()				
 			
 	def sendMsg(self):
-		data = self.ping_jtag();
+
+		data = self.ping_jtag()
+
 		self.sock.send(bytes(data, 'utf-8'))
 
 	def ping_jtag(self):
@@ -74,6 +77,7 @@ class Client:
 			self.ToBeSent = self.ToSend
 		self.ToBeSent = chr((ord(str(self.ToBeSent))-48)+98)
 		inputCmd = "nios2-terminal.exe <<< " + str(self.ToBeSent)
+
 		output = subprocess.run(inputCmd, shell=True, executable='/bin/bash', stdout=subprocess.PIPE)
 		vals = output.stdout
 		vals = vals.decode(encoding ='UTF-8',errors='ignore')
