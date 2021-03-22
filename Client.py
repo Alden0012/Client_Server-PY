@@ -2,34 +2,83 @@
 import threading
 import socket
 import subprocess
+import time
+import os
 class Client:
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	started = False
+	ToSend = 0
+	TheFlag = False
+	ToBeSent = 0
 	def __init__(self, address):
 		self.sock.connect((address,10000))
-		self.run()
-	def run(self):
-		aThread = threading.Thread(target = self.recieveMsg)
+		self.runS1()
+	def runS1(self): #connecting to server state
+		data = self.sock.recv(1024)
+		print(str(data,'utf-8'))
+		#while !(str(data,'utf-8')):
+		#	data = self.sock.recv(1024)
+	    #	print(str(data,'utf-8'))
+		self.runS2()
+	def runS2(self): #game state
+		print("Game Started!")
+		started = True
+		aThread = threading.Thread(target = self.recieveResponse)
 		aThread.daemon = True
-		aThread.start()	
-		while True:
+		aThread.start()
+		while started:
+			#time.sleep(0.1)
 			self.sendMsg()
-			#print("Sending")
-	def recieveMsg(self):
+		aThread.stop()
+		print("Thanks for playing!")
+		data = self.sock.recv(1024)
+		print(str(data,'utf-8'))
+	def wait(self):
+		time.sleep(8)
+		started = False
+	def recieveResponse(self):
 		while True:
 			data = self.sock.recv(1024)
-			if not data:
+			print(str(data,'utf-8'))
+			if(str(data,'utf-8')[0:9] == "Incorrect"):
+				self.ToSend = int(str(data,'utf-8')[20]) 
+
+			elif(str(data,'utf-8')[0:7] == "Correct"):
+				self.ToSend = int(str(data,'utf-8')[18]) 
+
+			elif(str(data,'utf-8')[0:6] == "Points"):
+				self.ToSend = int(str(data,'utf-8')[8])
+	
+			if(str(data,'utf-8') == "e" or str(data,'utf-8') == ""):
+				started = False
 				break
-			print('Server: ' + str(data,'utf-8'))	
+		print("Thanks for playing!")
+		os._exit(0)
+	def recieveMsg(self):
+		while True:
+
+			data = self.sock.recv(1024)
+			self.runS2()				
+			
 	def sendMsg(self):
-		self.sock.send(bytes(input(""), 'utf-8'))
-		self.run()
+		data = self.ping_jtag();
+		self.sock.send(bytes(data, 'utf-8'))
+
 	def ping_jtag(self):
 		#pings the jtag with the letter t, when the fgpa recieves this through the jtag
 		#it will respond with current accelerometer 
-		inputCmd = "nios2-terminal <<< t"
+		if(self.ToSend > 9):
+			self.ToBeSent = chr( ord('9') +  (self.ToSend - 9) )
+
+		else:
+			self.ToBeSent = self.ToSend
+		self.ToBeSent = chr((ord(str(self.ToBeSent))-48)+98)
+		inputCmd = "nios2-terminal.exe <<< " + str(self.ToBeSent)
 		output = subprocess.run(inputCmd, shell=True, executable='/bin/bash', stdout=subprocess.PIPE)
 		vals = output.stdout
-		return vals;
+		vals = vals.decode(encoding ='UTF-8',errors='ignore')
+		vals = vals.split('<-->')
+		return vals[1].strip()
     	
 
 client_inst = Client('104.45.152.207')
