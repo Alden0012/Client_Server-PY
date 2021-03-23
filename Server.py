@@ -2,13 +2,18 @@ import socket
 import threading
 import time
 import random
+import codecs
 class Server:
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	connections = []
-	QuestionBank = {"Choose A": "A", "Choose B": "B" ,"Choose C": "C" ,"Choose D": "D"}
+	QuestionBank = {}
+	QuestionTime = {}
+	NameList = {"Sage Buzzard","Aromatic Raven","Fat Parrot","Sweet Bonobo", "Ambitious Muskox", "Fiery Axolotl", "Roaring Adder", "Careful Deer", "Lovely Alpaca", "Cerise Hare", "Terrestrial Longhorn", "Beige Chicken", "Jolly Platypus", "Adept Trout"}
+	PlayerNames = {}
 	Players = {}
 	Recieved = {}
 	AliasToC = {}
+	InputFile = "Questions.txt"
 	maxPlayers = 4
 	def __init__(self):
 		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -28,6 +33,15 @@ class Server:
 			print(self.Recieved)
 			#self.broadcast_single(data)
 	def runS1(self):
+		#preamble: loading questions in
+		f = open(self.InputFile)
+		for line in f:
+			(key, val, time) = line.strip().split("^",2)
+			self.QuestionBank[key.replace('\\n','\n')] = val.strip()
+			self.QuestionTime[key.replace('\\n','\n')] = time.strip()
+		#for key in self.QuestionBank.keys():
+
+			#print(key,self.QuestionBank[key])
 		#State 1: Connecting to other devices
 		while True:
 				c, a = self.sock.accept()
@@ -42,6 +56,9 @@ class Server:
 				self.Players[alias] = 0
 				self.Recieved[alias] = 0
 				self.AliasToC[alias] = c
+				choice = random.choice(list(self.NameList))
+				self.PlayerNames[alias] = choice
+				self.NameList.remove(choice)
 				print(str(a[1]), "connected" )
 				
 				if len(self.connections) > self.maxPlayers-1:
@@ -59,13 +76,14 @@ class Server:
 			#for connection in self.connections:
 			#	connection.send(bytes("Round " + str(i), 'utf-8'))
 			Question, answer = random.choice(list(self.QuestionBank.items())) 
+			QuestionBank.pop(Question)
 			for connection in self.connections:
 				connection.send(bytes(Question, 'utf-8'))
 			for key in self.AliasToC.keys():
 				cThread = threading.Thread(target = self.handler, args = (self.AliasToC[key],key))
 				cThread.daemon = True
 				cThread.start()
-			time.sleep(10)
+			time.sleep(self.QuestionTime[Question])
 			print("Round Over!")
 			print(self.Recieved)
 			for connection in self.connections:
