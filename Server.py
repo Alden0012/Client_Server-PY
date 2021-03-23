@@ -98,9 +98,13 @@ class Server:
 					self.AliasToC[key].send(bytes("Points: " + str(self.Players[key]) + "\n", 'utf-8'))
 			print(self.Players)
 			i = i + 1
+		FinishingData = ""
+		for key in self.Players.keys():
+			FinishingData = FinishingData + str(PlayerNames[key]) + " : " + str(Players[key]) + "\n"
+
 		for connection in self.connections:
 				connection.send(bytes("Game over!"+ "\n", 'utf-8'))
-				connection.send(bytes(str(self.Players)+ "\n", 'utf-8'))
+				connection.send(bytes(str(FinishingData)+ "\n", 'utf-8'))
 				connection.send(bytes(str("e")+ "\n", 'utf-8'))
 
 
