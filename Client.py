@@ -7,6 +7,9 @@ import os
 class Client:
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	started = False
+	ToSend = 0
+	TheFlag = False
+	ToBeSent = 0
 	def __init__(self, address):
 		self.sock.connect((address,10000))
 		self.runS1()
@@ -24,7 +27,8 @@ class Client:
 		aThread.daemon = True
 		aThread.start()
 		while started:
-			time.sleep(1.3)
+			#time.sleep(0.1)
+
 			self.sendMsg()
 		aThread.stop()
 		print("Thanks for playing!")
@@ -37,6 +41,15 @@ class Client:
 		while True:
 			data = self.sock.recv(1024)
 			print(str(data,'utf-8'))
+			if(str(data,'utf-8')[0:9] == "Incorrect"):
+				self.ToSend = int(str(data,'utf-8')[20]) 
+
+			elif(str(data,'utf-8')[0:7] == "Correct"):
+				self.ToSend = int(str(data,'utf-8')[18]) 
+
+			elif(str(data,'utf-8')[0:6] == "Points"):
+				self.ToSend = int(str(data,'utf-8')[8])
+
 			if(str(data,'utf-8') == "e" or str(data,'utf-8') == ""):
 				started = False
 				break
@@ -49,13 +62,22 @@ class Client:
 			self.runS2()				
 			
 	def sendMsg(self):
+
 		data = self.ping_jtag()
+
 		self.sock.send(bytes(data, 'utf-8'))
 
 	def ping_jtag(self):
 		#pings the jtag with the letter t, when the fgpa recieves this through the jtag
 		#it will respond with current accelerometer 
-		inputCmd = "nios2-terminal.exe <<< t"
+		if(self.ToSend > 9):
+			self.ToBeSent = chr( ord('9') +  (self.ToSend - 9) )
+
+		else:
+			self.ToBeSent = self.ToSend
+		self.ToBeSent = chr((ord(str(self.ToBeSent))-48)+98)
+		inputCmd = "nios2-terminal.exe <<< " + str(self.ToBeSent)
+
 		output = subprocess.run(inputCmd, shell=True, executable='/bin/bash', stdout=subprocess.PIPE)
 		vals = output.stdout
 		vals = vals.decode(encoding ='UTF-8',errors='ignore')
