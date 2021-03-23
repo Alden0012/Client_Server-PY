@@ -9,7 +9,7 @@ class Server:
 	Players = {}
 	Recieved = {}
 	AliasToC = {}
-	maxPlayers = 4
+	maxPlayers = 3
 	def __init__(self):
 		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.sock.bind(('0.0.0.0', 10000))
