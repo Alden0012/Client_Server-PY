@@ -11,6 +11,7 @@ class Server:
 	NameList = {"Sage Buzzard","Aromatic Raven","Fat Parrot","Sweet Bonobo", "Ambitious Muskox", "Fiery Axolotl", "Roaring Adder", "Careful Deer", "Lovely Alpaca", "Cerise Hare", "Terrestrial Longhorn", "Beige Chicken", "Jolly Platypus", "Adept Trout"}
 	PlayerNames = {}
 	Players = {}
+	Leaderboard = {}
 	Recieved = {}
 	AliasToC = {}
 	InputFile = "Questions.txt"
@@ -99,7 +100,8 @@ class Server:
 			print(self.Players)
 			i = i + 1
 		FinishingData = ""
-		for key in self.Players.keys():
+		self.Leaderboard = {k: v for k, v in sorted(self.Players.items(), key=lambda item: item[1])}
+		for key in self.Leaderboard.keys():
 			FinishingData = FinishingData + str(PlayerNames[key]) + " : " + str(Players[key]) + "\n"
 
 		for connection in self.connections:
