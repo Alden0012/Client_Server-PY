@@ -3,6 +3,7 @@ import threading
 import time
 import random
 import codecs
+import operator
 class Server:
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	connections = []
@@ -15,7 +16,7 @@ class Server:
 	Recieved = {}
 	AliasToC = {}
 	InputFile = "Questions.txt"
-	maxPlayers = 6
+	maxPlayers = 3
 	def __init__(self):
 		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.sock.bind(('0.0.0.0', 10000))
@@ -73,7 +74,7 @@ class Server:
 		for key in self.AliasToC.keys():
 			self.AliasToC[key].send(bytes("Get Ready! Player: " + str(self.PlayerNames[key]) + "\n\n", 'utf-8'))
 		i = 1
-		while i < 4: 
+		while i < 3: 
 			#for connection in self.connections:
 			#	connection.send(bytes("Round " + str(i), 'utf-8'))
 			Question, answer = random.choice(list(self.QuestionBank.items())) 
@@ -101,8 +102,8 @@ class Server:
 			i = i + 1
 		FinishingData = "\n----------------\nLeaderboard\n----------------\n\n"
 		self.Leaderboard = {k: v for k, v in sorted(self.Players.items(), key=lambda item: item[1])}
-		for key in self.Leaderboard.keys():
-			FinishingData = FinishingData + str(PlayerNames[key]) + " : " + str(Players[key]) + "\n"
+		for key in sorted(self.Players, key = self.Players.get,reverse = True):
+			FinishingData = FinishingData + str(self.PlayerNames[key]) + " : " + str(self.Players[key]) + "\n"
 
 		for connection in self.connections:
 				connection.send(bytes("Game over!"+ "\n", 'utf-8'))
