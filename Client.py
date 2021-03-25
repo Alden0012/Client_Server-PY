@@ -23,15 +23,19 @@ class Client:
 		self.runS2()
 	def runS2(self): #game state
 		print("Game Started!")
-		started = True
+		self.started = True
 		aThread = threading.Thread(target = self.recieveResponse)
 		aThread.daemon = True
 		aThread.start()
-		while True:
+		while self.started:
 			if(self.roundOver):
 				time.sleep(4)
 				self.sendMsg()
 				self.roundOver = False
+		aThread.join()
+		self.ping_jtag()
+		print("Thanks for playing!")
+		os._exit(0)
 
 	def wait(self):
 		time.sleep(8)
@@ -50,11 +54,10 @@ class Client:
 				self.ToSend = int(str(data,'utf-8')[8])
 				self.roundOver = True
 			if(str(data,'utf-8') == "e" or str(data,'utf-8') == ""):
+				#print("Thanks for playing!")
 				self.started = False
-				print("Thanks for playing!")
-				time.sleep(2)
 				break
-		os._exit(0)
+		#os._exit(0)
 	def recieveMsg(self):
 		while True:
 
@@ -86,4 +89,3 @@ class Client:
     	
 
 client_inst = Client('104.45.152.207')
-
