@@ -101,7 +101,7 @@ class Server:
 			i = i + 1
 		FinishingData = "\n----------------\nLeaderboard\n----------------\n\n"
 		self.Leaderboard = {k: v for k, v in sorted(self.Players.items(), key=lambda item: item[1])}
-		for key in self.Leaderboard.keys():
+		for key in sorted(self.Leaderboard.keys()):
 			FinishingData = FinishingData + str(PlayerNames[key]) + " : " + str(Players[key]) + "\n"
 
 		for connection in self.connections:

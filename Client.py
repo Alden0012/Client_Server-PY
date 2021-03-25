@@ -7,6 +7,7 @@ import os
 class Client:
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	started = False
+	roundOver = True
 	ToSend = 0
 	TheFlag = False
 	ToBeSent = 0
@@ -27,9 +28,10 @@ class Client:
 		aThread.daemon = True
 		aThread.start()
 		while started:
-			#time.sleep(0.1)
-
-			self.sendMsg()
+			if(roundOver):
+				time.sleep(4)
+				self.sendMsg()
+				roundOver = False
 		aThread.stop()
 		print("Thanks for playing!")
 		data = self.sock.recv(1024)
@@ -43,13 +45,13 @@ class Client:
 			print(str(data,'utf-8'))
 			if(str(data,'utf-8')[0:9] == "Incorrect"):
 				self.ToSend = int(str(data,'utf-8')[20]) 
-
+				roundOver = True
 			elif(str(data,'utf-8')[0:7] == "Correct"):
 				self.ToSend = int(str(data,'utf-8')[18]) 
-
+				roundOver = True
 			elif(str(data,'utf-8')[0:6] == "Points"):
 				self.ToSend = int(str(data,'utf-8')[8])
-
+				roundOver = True
 			if(str(data,'utf-8') == "e" or str(data,'utf-8') == ""):
 				started = False
 				break
