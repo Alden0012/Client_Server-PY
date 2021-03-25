@@ -27,15 +27,12 @@ class Client:
 		aThread = threading.Thread(target = self.recieveResponse)
 		aThread.daemon = True
 		aThread.start()
-		while started:
-			if(roundOver):
+		while True:
+			if(self.roundOver):
 				time.sleep(4)
 				self.sendMsg()
-				roundOver = False
-		aThread.stop()
-		print("Thanks for playing!")
-		data = self.sock.recv(1024)
-		print(str(data,'utf-8'))
+				self.roundOver = False
+
 	def wait(self):
 		time.sleep(8)
 		started = False
@@ -45,17 +42,18 @@ class Client:
 			print(str(data,'utf-8'))
 			if(str(data,'utf-8')[0:9] == "Incorrect"):
 				self.ToSend = int(str(data,'utf-8')[20]) 
-				roundOver = True
+				self.roundOver = True
 			elif(str(data,'utf-8')[0:7] == "Correct"):
 				self.ToSend = int(str(data,'utf-8')[18]) 
-				roundOver = True
+				self.roundOver = True
 			elif(str(data,'utf-8')[0:6] == "Points"):
 				self.ToSend = int(str(data,'utf-8')[8])
-				roundOver = True
+				self.roundOver = True
 			if(str(data,'utf-8') == "e" or str(data,'utf-8') == ""):
-				started = False
+				self.started = False
+				print("Thanks for playing!")
+				time.sleep(2)
 				break
-		print("Thanks for playing!")
 		os._exit(0)
 	def recieveMsg(self):
 		while True:
@@ -88,3 +86,4 @@ class Client:
     	
 
 client_inst = Client('104.45.152.207')
+
