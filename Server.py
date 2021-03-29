@@ -16,11 +16,16 @@ class Server:
 	Recieved = {}
 	AliasToC = {}
 	InputFile = "Questions.txt"
-	maxPlayers = 1
-	def __init__(self):
+	maxPlayers = 3
+	Rounds = 5
+	def __init__(self,players,rounds):
+		self.maxPlayers = players
+		self.Rounds = rounds
+		print("Waiting for players")
 		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.sock.bind(('0.0.0.0', 10000))
 		self.sock.listen(1)
+		
 	def handler(self,c,a):
 		while True:
 			data = c.recv(1024)
@@ -74,7 +79,7 @@ class Server:
 		for key in self.AliasToC.keys():
 			self.AliasToC[key].send(bytes("Get Ready! Player: " + str(self.PlayerNames[key]) + "\n\n", 'utf-8'))
 		i = 1
-		while i < 3: 
+		while i < (self.Rounds+1): 
 			#for connection in self.connections:
 			#	connection.send(bytes("Round " + str(i), 'utf-8'))
 			Question, answer = random.choice(list(self.QuestionBank.items())) 
@@ -125,6 +130,7 @@ class Server:
 			if data == "Close": 
 				self.sock.shutdown(socket.SHUT_RDWR)
 				exit()
-
-server_inst = Server()
+playerCount = input("Number of players?: ")
+roundinput = input("Number of rounds?: ")
+server_inst = Server(playerCount,roundinput)
 server_inst.runS1()
