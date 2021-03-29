@@ -19,8 +19,8 @@ class Server:
 	maxPlayers = 3
 	Rounds = 5
 	def __init__(self,players,rounds):
-		self.maxPlayers = players
-		self.Rounds = rounds
+		self.maxPlayers = int(players)
+		self.Rounds = int(rounds)
 		print("Waiting for players")
 		self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.sock.bind(('0.0.0.0', 10000))
