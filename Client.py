@@ -88,5 +88,5 @@ class Client:
 		return vals[1].strip()
     	
 ServerAddr = input("Server Address: ")
-ServerPort = input("Server Port: ")
+ServerPort = int(input("Server Port: "))
 client_inst = Client(ServerAddr,ServerPort)
