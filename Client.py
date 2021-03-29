@@ -11,8 +11,8 @@ class Client:
 	ToSend = 0
 	TheFlag = False
 	ToBeSent = 0
-	def __init__(self, address):
-		self.sock.connect((address,10000))
+	def __init__(self, address, port):
+		self.sock.connect((address,port))
 		self.runS1()
 	def runS1(self): #connecting to server state
 		data = self.sock.recv(1024)
@@ -87,5 +87,6 @@ class Client:
 		vals = vals.split('<-->')
 		return vals[1].strip()
     	
-
-client_inst = Client('104.45.152.207')
+ServerAddr = input("Server Address: ")
+ServerPort = input("Server Port: ")
+client_inst = Client(ServerAddr,ServerPort)
